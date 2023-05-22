@@ -1,5 +1,7 @@
+//CommentGenerator.js 
+
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Link } from 'react-router-dom';
 
 import { Button, Form } from 'react-bootstrap';
 import Segment from './Segment';
@@ -16,6 +18,7 @@ function CommentGenerator() {
     const [segments, setSegments] = useState(null);
    
     const [activeCollection, setActiveCollection] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
 
 
 
@@ -24,31 +27,34 @@ function CommentGenerator() {
     };
 
     useEffect(() => {
-      let loadedCollections = JSON.parse(localStorage.getItem('collections')) || [];
-    
+      let loadedCollections = JSON.parse(localStorage.getItem('collections')) || {};
+      
       // If no collections, create a new one named 'My Comments'
       if (Object.keys(loadedCollections).length === 0) {
         loadedCollections = {
           'My Comments': []
         };
         localStorage.setItem('collections', JSON.stringify(loadedCollections));
-        updateActiveCollection("My Comments")
-        
       }
+      updateActiveCollection("My Comments");
+      setIsLoading(false);
+    }, []);
 
-    })
+    if (isLoading) {
+      return <div>Loading...</div>; // or a loading spinner, etc.
+    }
     
   return (
     <Router>
       <div>
       <Navbar bg="light" expand="lg" className = "p-3">
-      <Navbar.Brand href="#home">Smart Comments</Navbar.Brand>
+      <Navbar.Brand href="/">Smart Comments</Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
         <Nav.Link as={Link} to="/">Collections</Nav.Link>
         <Nav.Link as={Link} to="/setup">Setup</Nav.Link>
-          <Nav.Link as={Link} to="/reports">Report</Nav.Link>
+          <Nav.Link as={Link} to="/reports">Reports</Nav.Link>
           
           
         </Nav>
@@ -67,6 +73,10 @@ function CommentGenerator() {
             updateActiveCollection={updateActiveCollection} // Pass down updateActiveCollection function
           />} />
           <Route path = "/" element = {<CollectionsView
+            activeCollection={activeCollection} // Pass down activeCollection
+            updateActiveCollection={updateActiveCollection} // Pass down updateActiveCollection function
+          />}/>
+          <Route path = "" element = {<CollectionsView
             activeCollection={activeCollection} // Pass down activeCollection
             updateActiveCollection={updateActiveCollection} // Pass down updateActiveCollection function
           />}/>
