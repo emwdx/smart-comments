@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Link } from 'react-router-dom';
 
-import { Button, Form } from 'react-bootstrap';
-import Segment from './Segment';
+
+
 import ReportView from './ReportView';
 import SetupView from './SetupView';
 import Footer from './Footer'
@@ -15,7 +15,7 @@ import './App.css';
 function CommentGenerator() {
 
     //const [segments, setSegments] = useState([{ title: '', levelTexts: [[''], [''], ['']], level: 0 }]);
-    const [segments, setSegments] = useState(null);
+    //const [segments, setSegments] = useState(null);
    
     const [activeCollection, setActiveCollection] = useState('');
     const [isLoading, setIsLoading] = useState(true);
@@ -35,10 +35,34 @@ function CommentGenerator() {
           'My Comments': []
         };
         localStorage.setItem('collections', JSON.stringify(loadedCollections));
+        updateActiveCollection("My Comments");
       }
-      updateActiveCollection("My Comments");
+      if (loadedCollections && typeof loadedCollections === 'object') {
+        const collectionsArray = Object.entries(loadedCollections).map(([name, segments]) => ({ name, segments }));
+        //console.log("sorting array")
+        collectionsArray.sort((a, b) => {
+          if (a.name === activeCollection) {
+            return -1;
+          }
+          if (b.name === activeCollection) {
+            return 1;
+          }
+          // For non-active collections, sort alphabetically.
+          return a.name.localeCompare(b.name);
+        });
+  
+        //setCollections(collectionsArray);
+        //console.log(collectionsArray)
+        localStorage.setItem('collections', JSON.stringify(loadedCollections));
+        //console.log(collectionsArray,collectionsArray[0].name)
+        updateActiveCollection(collectionsArray[0].name);
+        localStorage.setItem('segments', JSON.stringify(collectionsArray[0].segments));
+      } else {
+        console.log("special case");
+      }
+      
       setIsLoading(false);
-    }, []);
+    }, [activeCollection]);
 
     if (isLoading) {
       return <div>Loading...</div>; // or a loading spinner, etc.
@@ -48,7 +72,7 @@ function CommentGenerator() {
     <Router>
       <div>
       <Navbar bg="light" expand="lg" className = "p-3">
-      <Navbar.Brand href="/">Smart Comments</Navbar.Brand>
+      <Navbar.Brand href="/">Smart Comments<span className = "badge text-info">BETA</span></Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">

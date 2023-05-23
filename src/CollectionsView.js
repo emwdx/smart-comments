@@ -18,7 +18,7 @@ function CollectionsView({
   const [newCollectionName, setNewCollectionName] = useState('');
   const [currentCollectionName, setCurrentCollectionName] = useState('');
   const [activeSegments, setActiveSegments] = useState(JSON.parse(localStorage.getItem('segments')) || []);
-  const [showSaveModal, setShowSaveModal] = useState(false);
+  //const [showSaveModal, setShowSaveModal] = useState(false);
   const [showNewModal, setShowNewModal] = useState(false);
   const [importedCollectionText, setImportedCollection] = useState('');
   const [importedCollectionName, setImportedCollectionName] = useState('');
@@ -36,7 +36,7 @@ function CollectionsView({
       };
       localStorage.setItem('collections', JSON.stringify(loadedCollections));
       localStorage.setItem('segments', JSON.stringify([]));
-      updateActiveCollection("My Comments");
+      
 
       //console.log("made new default collection")
     }
@@ -48,7 +48,7 @@ function CollectionsView({
     if (!activeCollection || !loadedCollections.hasOwnProperty(activeCollection)) {
       const firstCollection = loadedCollectionsArray[0];
       updateActiveCollection(firstCollection.name);
-      setActiveSegments(firstCollection.segments);
+      
       updateActiveCollectionSegments(firstCollection.segments); // Update active segments in local storage
     }
 */
@@ -79,7 +79,7 @@ function CollectionsView({
   }, [collections]);
 
   const updateActiveCollectionSegments = () => {
-    //if (!activeCollection) return; // Return if there is no active collection
+    if (!activeCollection) return; // Return if there is no active collection
 
     let collectionsObj = JSON.parse(localStorage.getItem('collections')) || {};
 
@@ -87,7 +87,7 @@ function CollectionsView({
     collectionsObj[activeCollection] = activeSegments;
     localStorage.setItem('collections', JSON.stringify(collectionsObj));
   }
-
+/*
   const importActiveCollectionSegments = (textareaContent) => {
     if (!activeCollection) return; // Return if there is no active collection
 
@@ -107,7 +107,7 @@ function CollectionsView({
     localStorage.setItem('collections', JSON.stringify(collectionsObj));
     localStorage.setItem('segments', JSON.stringify(updatedSegments));
   }
-
+*/
   const importCollection = () => {
     let importedCollection;
     try {
@@ -171,6 +171,7 @@ function CollectionsView({
 
   // Function to handle selection from the dropdown
   const changeActiveCollection = (collectionName) => {
+    updateActiveCollection(collectionName);
     // Load collections from localStorage
     let collectionsObj = JSON.parse(localStorage.getItem('collections')) || {};
     // Find the new active collection
@@ -201,7 +202,7 @@ function CollectionsView({
     // Update active segments in state and localStorage
     setActiveSegments(selectedCollection.segments);
     localStorage.setItem('segments', JSON.stringify(selectedCollection.segments));
-    updateActiveCollection(collectionName);
+    
   };
 
 
